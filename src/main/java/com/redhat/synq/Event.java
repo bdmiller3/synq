@@ -21,6 +21,7 @@ package com.redhat.synq;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.hamcrest.Matcher;
@@ -50,6 +51,12 @@ public interface Event<T> {
             action.run();
             return null;
         }, this);
+    }
+    
+    default <U> Event<U> then(Function<T, U> callback) {
+        return (t, u) -> {
+            return callback.apply(this.waitUpTo(t, u));
+        };
     }
     
     /**
